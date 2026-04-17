@@ -1,0 +1,102 @@
+[
+  {
+    "title": "Two Sum",
+    "slug": "two-sum",
+    "difficulty": "Easy",
+    "tags": "array,hash-map",
+    "problem_text": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution.",
+    "solution_code": "def twoSum(nums, target):\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i\n    return []",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)"
+  },
+  {
+    "title": "Longest Substring Without Repeating Characters",
+    "slug": "longest-substring-no-repeat",
+    "difficulty": "Medium",
+    "tags": "hash-map,sliding-window,string",
+    "problem_text": "Given a string s, find the length of the longest substring without repeating characters.",
+    "solution_code": "def lengthOfLongestSubstring(s):\n    char_index = {}\n    left = max_len = 0\n    for right, char in enumerate(s):\n        if char in char_index and char_index[char] >= left:\n            left = char_index[char] + 1\n        char_index[char] = right\n        max_len = max(max_len, right - left + 1)\n    return max_len",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(min(m,n))"
+  },
+  {
+    "title": "Median of Two Sorted Arrays",
+    "slug": "median-two-sorted-arrays",
+    "difficulty": "Hard",
+    "tags": "array,binary-search,divide-conquer",
+    "problem_text": "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.",
+    "solution_code": "def findMedianSortedArrays(nums1, nums2):\n    if len(nums1) > len(nums2):\n        nums1, nums2 = nums2, nums1\n    m, n = len(nums1), len(nums2)\n    lo, hi = 0, m\n    while lo <= hi:\n        i = (lo + hi) // 2\n        j = (m + n + 1) // 2 - i\n        maxL1 = float('-inf') if i == 0 else nums1[i-1]\n        minR1 = float('inf') if i == m else nums1[i]\n        maxL2 = float('-inf') if j == 0 else nums2[j-1]\n        minR2 = float('inf') if j == n else nums2[j]\n        if maxL1 <= minR2 and maxL2 <= minR1:\n            if (m + n) % 2 == 0:\n                return (max(maxL1, maxL2) + min(minR1, minR2)) / 2.0\n            return float(max(maxL1, maxL2))\n        elif maxL1 > minR2:\n            hi = i - 1\n        else:\n            lo = i + 1",
+    "time_complexity": "O(log(min(m,n)))",
+    "space_complexity": "O(1)"
+  },
+  {
+    "title": "Coin Change",
+    "slug": "coin-change",
+    "difficulty": "Medium",
+    "tags": "dynamic-programming,breadth-first-search",
+    "problem_text": "You are given an integer array coins representing coins of different denominations and an integer amount. Return the fewest number of coins needed to make up amount.",
+    "solution_code": "def coinChange(coins, amount):\n    dp = [float('inf')] * (amount + 1)\n    dp[0] = 0\n    for coin in coins:\n        for x in range(coin, amount + 1):\n            dp[x] = min(dp[x], dp[x - coin] + 1)\n    return dp[amount] if dp[amount] != float('inf') else -1",
+    "time_complexity": "O(S*n)",
+    "space_complexity": "O(S)"
+  },
+  {
+    "title": "Number of Islands",
+    "slug": "number-of-islands",
+    "difficulty": "Medium",
+    "tags": "graph,depth-first-search,breadth-first-search,union-find",
+    "problem_text": "Given an m x n 2D binary grid which represents a map of '1's (land) and '0's (water), return the number of islands.",
+    "solution_code": "def numIslands(grid):\n    if not grid:\n        return 0\n    count = 0\n    rows, cols = len(grid), len(grid[0])\n    def dfs(r, c):\n        if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] != '1':\n            return\n        grid[r][c] = '0'\n        dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1)\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == '1':\n                count += 1\n                dfs(r, c)\n    return count",
+    "time_complexity": "O(M*N)",
+    "space_complexity": "O(M*N)"
+  },
+  {
+    "title": "Climbing Stairs",
+    "slug": "climbing-stairs",
+    "difficulty": "Easy",
+    "tags": "dynamic-programming,math,memoization",
+    "problem_text": "You are climbing a staircase. It takes n steps to reach the top. Each time you can climb 1 or 2 steps. How many distinct ways can you climb to the top?",
+    "solution_code": "def climbStairs(n):\n    if n <= 2:\n        return n\n    a, b = 1, 2\n    for _ in range(3, n + 1):\n        a, b = b, a + b\n    return b",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)"
+  },
+  {
+    "title": "Word Search",
+    "slug": "word-search",
+    "difficulty": "Medium",
+    "tags": "array,backtracking,depth-first-search",
+    "problem_text": "Given an m x n grid of characters board and a string word, return true if word exists in the grid.",
+    "solution_code": "def exist(board, word):\n    rows, cols = len(board), len(board[0])\n    def dfs(r, c, idx):\n        if idx == len(word): return True\n        if r<0 or r>=rows or c<0 or c>=cols or board[r][c]!=word[idx]: return False\n        temp = board[r][c]\n        board[r][c] = '#'\n        found = dfs(r+1,c,idx+1) or dfs(r-1,c,idx+1) or dfs(r,c+1,idx+1) or dfs(r,c-1,idx+1)\n        board[r][c] = temp\n        return found\n    return any(dfs(r,c,0) for r in range(rows) for c in range(cols))",
+    "time_complexity": "O(M*N*4^L)",
+    "space_complexity": "O(L)"
+  },
+  {
+    "title": "Merge k Sorted Lists",
+    "slug": "merge-k-sorted-lists",
+    "difficulty": "Hard",
+    "tags": "linked-list,heap,divide-conquer,merge-sort",
+    "problem_text": "You are given an array of k linked-lists lists, each linked-list is sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it.",
+    "solution_code": "import heapq\ndef mergeKLists(lists):\n    heap = []\n    for i, node in enumerate(lists):\n        if node:\n            heapq.heappush(heap, (node.val, i, node))\n    dummy = curr = ListNode(0)\n    while heap:\n        val, i, node = heapq.heappop(heap)\n        curr.next = node\n        curr = curr.next\n        if node.next:\n            heapq.heappush(heap, (node.next.val, i, node.next))\n    return dummy.next",
+    "time_complexity": "O(N log k)",
+    "space_complexity": "O(k)"
+  },
+  {
+    "title": "Trapping Rain Water",
+    "slug": "trapping-rain-water",
+    "difficulty": "Hard",
+    "tags": "array,two-pointers,dynamic-programming,stack",
+    "problem_text": "Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+    "solution_code": "def trap(height):\n    left, right = 0, len(height) - 1\n    left_max = right_max = water = 0\n    while left < right:\n        if height[left] < height[right]:\n            if height[left] >= left_max:\n                left_max = height[left]\n            else:\n                water += left_max - height[left]\n            left += 1\n        else:\n            if height[right] >= right_max:\n                right_max = height[right]\n            else:\n                water += right_max - height[right]\n            right -= 1\n    return water",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)"
+  },
+  {
+    "title": "Course Schedule",
+    "slug": "course-schedule",
+    "difficulty": "Medium",
+    "tags": "graph,depth-first-search,breadth-first-search,topological-sort",
+    "problem_text": "There are a total of numCourses courses you have to take. Some courses have prerequisites. Given the prerequisites array, determine if you can finish all courses.",
+    "solution_code": "from collections import defaultdict, deque\ndef canFinish(numCourses, prerequisites):\n    graph = defaultdict(list)\n    in_degree = [0] * numCourses\n    for a, b in prerequisites:\n        graph[b].append(a)\n        in_degree[a] += 1\n    queue = deque([i for i in range(numCourses) if in_degree[i] == 0])\n    count = 0\n    while queue:\n        node = queue.popleft()\n        count += 1\n        for neighbor in graph[node]:\n            in_degree[neighbor] -= 1\n            if in_degree[neighbor] == 0:\n                queue.append(neighbor)\n    return count == numCourses",
+    "time_complexity": "O(V+E)",
+    "space_complexity": "O(V+E)"
+  }
+]

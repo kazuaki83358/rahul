@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Gemini Code Assistant</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);">
+    <header>
+        <h1>Gemini Code Assistant</h1>
+    </header>
+    <main style="max-width: 450px; padding-top: 5rem;">
+        <div class="card" style="padding: 3rem;">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Create Account</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="name@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Min. 8 characters" required>
+                </div>
+                <button type="submit">Get Started</button>
+                <div id="error" class="error" style="text-align: center;"></div>
+            </form>
+            <p style="text-align: center; margin-top: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+                Already have an account? <a href="/login" style="color: var(--primary); font-weight: 600; text-decoration: none;">Sign in here</a>
+            </p>
+        </div>
+    </main>
+    <script>
+        document.getElementById('registerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const errorDiv = document.getElementById('error');
+            errorDiv.style.display = 'none';
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/v1/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.access_token);
+                    document.cookie = `access_token=${data.access_token}; path=/`;
+                    window.location.href = '/';
+                } else {
+                    const err = await response.json();
+                    errorDiv.innerText = err.detail || 'Registration failed';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errorDiv.innerText = 'Server connection failed';
+                errorDiv.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>

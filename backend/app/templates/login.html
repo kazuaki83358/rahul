@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Gemini Code Assistant</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);">
+    <header>
+        <h1>Gemini Code Assistant</h1>
+    </header>
+    <main style="max-width: 450px; padding-top: 5rem;">
+        <div class="card" style="padding: 3rem;">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Welcome Back</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Email Address</label>
+                    <input type="email" id="username" name="username" placeholder="name@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit">Sign In</button>
+                <div id="error" class="error" style="text-align: center;"></div>
+            </form>
+            <p style="text-align: center; margin-top: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+                Don't have an account? <a href="/register" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create one now</a>
+            </p>
+        </div>
+    </main>
+    <script>
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const errorDiv = document.getElementById('error');
+            errorDiv.style.display = 'none';
+            
+            const formData = new FormData(e.target);
+            try {
+                const response = await fetch('/api/v1/auth/login', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.access_token);
+                    document.cookie = `access_token=${data.access_token}; path=/`;
+                    window.location.href = '/';
+                } else {
+                    const err = await response.json();
+                    errorDiv.innerText = err.detail || 'Invalid email or password';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errorDiv.innerText = 'Server connection failed';
+                errorDiv.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>
